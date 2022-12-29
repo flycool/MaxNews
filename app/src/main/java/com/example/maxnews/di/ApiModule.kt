@@ -1,6 +1,8 @@
 package com.example.maxnews.di
 
 import com.example.maxnews.api.NewsApi
+import com.example.maxnews.data.local.ArticleDatabase
+import com.example.maxnews.repository.NewsRepository
 import com.example.maxnews.util.base_url
 import dagger.Module
 import dagger.Provides
@@ -37,5 +39,12 @@ object ApiModule {
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create()
+
+    @Provides
+    @Singleton
+    fun provideNewsRepository(
+        db: ArticleDatabase,
+        api: NewsApi
+    ): NewsRepository = NewsRepository(db, api)
 
 }

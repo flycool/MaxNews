@@ -6,6 +6,7 @@ import com.example.maxnews.data.local.ArticleDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,9 +16,9 @@ object DbModule {
 
     @Provides
     @Singleton
-    fun provideArticleDatabase(context: Context): ArticleDatabase =
+    fun provideArticleDatabase(@ApplicationContext context: Context): ArticleDatabase =
         Room.databaseBuilder(
-            context.applicationContext,
+            context,
             ArticleDatabase::class.java,
             "article_db.db"
         ).build()

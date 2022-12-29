@@ -13,12 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.maxnews.ui.NewsViewModel
 import com.example.maxnews.ui.navigation.*
 import com.example.maxnews.ui.theme.MaxNewsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,9 +53,14 @@ fun Home() {
                 val currentDestination = navBackStackEntry?.destination
                 bottomItems.forEach { screen ->
                     BottomNavigationItem(
-                        icon = { Icon(painter = painterResource(id = screen.iconId), contentDescription = null)},
-                        label = { Text(text = stringResource(id = screen.resourceId))},
-                        selected = currentDestination?.hierarchy?.any{it.route == screen.route} == true,
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = screen.iconId),
+                                contentDescription = null
+                            )
+                        },
+                        label = { Text(text = stringResource(id = screen.resourceId)) },
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -68,13 +75,15 @@ fun Home() {
             }
         }
     ) {
+        val viewModel = viewModel<NewsViewModel>()
         NavHost(
             navController = navController,
             startDestination = Screen.BreakingNewsScreen.route,
             modifier = Modifier.padding(it)
         ) {
+
             composable(Screen.BreakingNewsScreen.route) {
-                BreakingNewsScreen(navController = navController)
+                BreakingNewsScreen(navController = navController, viewModel = viewModel)
             }
             composable(Screen.SavedNewsScreen.route) {
                 SavedNewsScreen(navController = navController)
