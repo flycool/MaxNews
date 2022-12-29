@@ -4,12 +4,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.maxnews.ui.navigation.*
 import com.example.maxnews.ui.theme.MaxNewsTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    Home()
                 }
             }
         }
@@ -30,14 +40,49 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MaxNewsTheme {
-        Greeting("Android")
+fun Home() {
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = {
+            BottomNavigation {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                bottomItems.forEach { screen ->
+                    BottomNavigationItem(
+                        icon = { Icon(painter = painterResource(id = screen.iconId), contentDescription = null)},
+                        label = { Text(text = stringResource(id = screen.resourceId))},
+                        selected = currentDestination?.hierarchy?.any{it.route == screen.route} == true,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = Screen.BreakingNewsScreen.route,
+            modifier = Modifier.padding(it)
+        ) {
+            composable(Screen.BreakingNewsScreen.route) {
+                BreakingNewsScreen(navController = navController)
+            }
+            composable(Screen.SavedNewsScreen.route) {
+                SavedNewsScreen(navController = navController)
+            }
+            composable(Screen.SearchNewsScreen.route) {
+                SearchNewsScreen(navController = navController)
+            }
+            composable(Screen.ArticleScreen.route) {
+                ArticleScreen(navController = navController)
+            }
+        }
     }
 }
