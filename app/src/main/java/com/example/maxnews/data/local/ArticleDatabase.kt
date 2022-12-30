@@ -9,7 +9,6 @@ import com.example.maxnews.data.model.Article
     entities = [Article::class],
     version = 1
 )
-@TypeConverters(Converters::class)
 abstract class ArticleDatabase : RoomDatabase() {
     abstract fun getArticleDao(): ArticleDao
 }

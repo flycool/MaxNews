@@ -9,5 +9,5 @@ class Converters {
     fun fromSource(source: Source): String = source.name
 
     @TypeConverter
-    fun toSrouce(name: String): Source = Source(name, name)
+    fun toSource(name: String): Source = Source(name)
 }

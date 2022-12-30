@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.example.maxnews.data.model.encodeToString
 import com.example.maxnews.ui.NewsViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -48,11 +49,11 @@ fun SearchNewsScreen(
             LazyColumn() {
                 items(state.articles) { item ->
                     Column(
-                        modifier = Modifier.clickable {
-                            val encodeUrl =
-                                URLEncoder.encode(item.url, StandardCharsets.UTF_8.toString())
-                            navController.navigate(Screen.ArticleScreen.withArgs(encodeUrl))
-                        }.padding(10.dp)
+                        modifier = Modifier
+                            .clickable {
+                                navController.navigate(Screen.ArticleScreen.route + "/${item.encodeToString()}")
+                            }
+                            .padding(10.dp)
                     ) {
                         Text(text = item.title)
                     }

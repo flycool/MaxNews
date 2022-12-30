@@ -2,8 +2,10 @@ package com.example.maxnews.repository
 
 import com.example.maxnews.api.NewsApi
 import com.example.maxnews.data.local.ArticleDatabase
+import com.example.maxnews.data.model.Article
 import com.example.maxnews.data.model.NewsResponse
 import com.example.maxnews.util.Resource
+import kotlinx.coroutines.flow.Flow
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,11 +23,11 @@ class NewsRepository @Inject constructor(
         return try {
             val response = api.searchForNews(search, page)
             if (response.isSuccessful) {
-               response.body()?.let { result->
-                   Resource.Success(result)
-               } ?: Resource.Error()
+                response.body()?.let { result ->
+                    Resource.Success(result)
+                } ?: Resource.Error()
             } else {
-                 Resource.Error(response.message())
+                Resource.Error(response.message())
             }
         } catch (e: Exception) {
             if (e is SocketTimeoutException) {
@@ -36,5 +38,10 @@ class NewsRepository @Inject constructor(
         }
     }
 
+    fun getSavedNews(): Flow<List<Article>> = db.getArticleDao().getAllArticles()
+
+    suspend fun upsert(article: Article) = db.getArticleDao().upsert(article)
+
+    suspend fun deleteArticle(article: Article) = db.getArticleDao().deleteArticle(article)
 
 }

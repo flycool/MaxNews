@@ -1,8 +1,12 @@
 package com.example.maxnews
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -10,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,9 +28,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.maxnews.data.model.Article
+import com.example.maxnews.data.model.ArticleParamType
 import com.example.maxnews.ui.NewsViewModel
 import com.example.maxnews.ui.navigation.*
 import com.example.maxnews.ui.theme.MaxNewsTheme
+import com.example.maxnews.util.key_article
 import com.example.maxnews.util.key_article_url
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,6 +57,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Home() {
     val navController = rememberNavController()
+    val viewModel = viewModel<NewsViewModel>()
     Scaffold(
         bottomBar = {
             BottomNavigation {
@@ -77,9 +85,8 @@ fun Home() {
                     )
                 }
             }
-        }
+        },
     ) {
-        val viewModel = viewModel<NewsViewModel>()
         NavHost(
             navController = navController,
             startDestination = Screen.BreakingNewsScreen.route,
@@ -90,21 +97,22 @@ fun Home() {
                 BreakingNewsScreen(navController = navController, viewModel = viewModel)
             }
             composable(Screen.SavedNewsScreen.route) {
-                SavedNewsScreen(navController = navController)
+                SavedNewsScreen(navController = navController, viewModel = viewModel)
             }
             composable(Screen.SearchNewsScreen.route) {
                 SearchNewsScreen(navController = navController, viewModel = viewModel)
             }
             composable(
-                route = Screen.ArticleScreen.route + "/{$key_article_url}",
+                route = Screen.ArticleScreen.route + "/{$key_article}",
                 arguments = listOf(
-                    navArgument(key_article_url) {
-                        type = NavType.StringType
+                    navArgument(key_article) {
+                        type = ArticleParamType()
                     }
                 )
-            ) { entry->
+            ) { entry ->
                 ArticleScreen(
-                    articleUrl = entry.arguments?.getString(key_article_url)
+                    article = entry.arguments?.getParcelable(key_article),
+                    viewModel = viewModel,
                 )
             }
         }

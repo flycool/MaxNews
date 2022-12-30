@@ -1,5 +1,6 @@
 package com.example.maxnews.ui.navigation
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +23,10 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.Navigator
+import com.example.maxnews.data.model.Article
+import com.example.maxnews.data.model.encodeToString
 import com.example.maxnews.ui.NewsViewModel
+import com.squareup.moshi.Moshi
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -57,9 +61,7 @@ fun BreakingNewsScreen(
                     Column(
                         modifier = Modifier
                             .clickable {
-                                val encodeUrl =
-                                    URLEncoder.encode(item.url, StandardCharsets.UTF_8.toString())
-                                navController.navigate(Screen.ArticleScreen.withArgs(encodeUrl))
+                                navController.navigate(Screen.ArticleScreen.route + "/${item.encodeToString()}")
                             }
                             .padding(10.dp)
                     ) {
