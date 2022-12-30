@@ -16,13 +16,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.maxnews.data.model.Article
 import com.example.maxnews.ui.NewsViewModel
 import com.example.maxnews.ui.navigation.*
 import com.example.maxnews.ui.theme.MaxNewsTheme
+import com.example.maxnews.util.key_article_url
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -91,8 +95,17 @@ fun Home() {
             composable(Screen.SearchNewsScreen.route) {
                 SearchNewsScreen(navController = navController, viewModel = viewModel)
             }
-            composable(Screen.ArticleScreen.route) {
-                ArticleScreen(navController = navController)
+            composable(
+                route = Screen.ArticleScreen.route + "/{$key_article_url}",
+                arguments = listOf(
+                    navArgument(key_article_url) {
+                        type = NavType.StringType
+                    }
+                )
+            ) { entry->
+                ArticleScreen(
+                    articleUrl = entry.arguments?.getString(key_article_url)
+                )
             }
         }
     }

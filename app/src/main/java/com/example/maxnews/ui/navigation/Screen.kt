@@ -22,6 +22,15 @@ sealed class Screen(
         Screen("searchnews", iconId = R.drawable.ic_all_news, resourceId = R.string.search_news)
 
     object ArticleScreen:Screen("article",0, 0)
+
+    fun withArgs(vararg args:String):String {
+        return buildString {
+            append(route)
+            args.forEach { arg->
+                append("/$arg")
+            }
+        }
+    }
 }
 
 val bottomItems = listOf(

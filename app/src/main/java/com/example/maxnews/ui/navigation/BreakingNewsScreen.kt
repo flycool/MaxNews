@@ -1,8 +1,10 @@
 package com.example.maxnews.ui.navigation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -13,10 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.os.bundleOf
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.Navigator
 import com.example.maxnews.ui.NewsViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -46,8 +54,17 @@ fun BreakingNewsScreen(
         Column {
             LazyColumn() {
                 items(state.articles) { item ->
-                    Text(text = item.title)
-                    Text(text = item.description)
+                    Column(
+                        modifier = Modifier
+                            .clickable {
+                                val encodeUrl =
+                                    URLEncoder.encode(item.url, StandardCharsets.UTF_8.toString())
+                                navController.navigate(Screen.ArticleScreen.withArgs(encodeUrl))
+                            }
+                            .padding(10.dp)
+                    ) {
+                        Text(text = item.title)
+                    }
                 }
             }
         }
