@@ -89,7 +89,7 @@ fun Home() {
                 SavedNewsScreen(navController = navController)
             }
             composable(Screen.SearchNewsScreen.route) {
-                SearchNewsScreen(navController = navController)
+                SearchNewsScreen(navController = navController, viewModel = viewModel)
             }
             composable(Screen.ArticleScreen.route) {
                 ArticleScreen(navController = navController)
