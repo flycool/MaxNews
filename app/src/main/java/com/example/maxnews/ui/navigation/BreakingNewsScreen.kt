@@ -13,6 +13,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,11 +62,13 @@ fun BreakingNewsScreen(
                     Column(
                         modifier = Modifier
                             .clickable {
-                                navController.navigate(Screen.ArticleScreen.route + "/${item.encodeToString()}")
+                                navController.navigate(Screen.ArticleScreen.route + "/${item.encodeToString()}/false")
                             }
                             .padding(10.dp)
                     ) {
-                        Text(text = item.title)
+                        key(item.url) {
+                            Text(text = item.title)
+                        }
                     }
                 }
             }

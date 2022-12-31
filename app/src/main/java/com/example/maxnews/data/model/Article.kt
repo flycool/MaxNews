@@ -11,10 +11,10 @@ import com.squareup.moshi.Moshi
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(tableName = "articles")
+@Entity(tableName = "articles", primaryKeys = ["id", "url"])
 data class Article(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int? = null,
+    //@PrimaryKey(autoGenerate = true)
+    var id: Int,
     val author: String?,
     val content: String?,
     val description: String?,

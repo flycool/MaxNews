@@ -103,16 +103,20 @@ fun Home() {
                 SearchNewsScreen(navController = navController, viewModel = viewModel)
             }
             composable(
-                route = Screen.ArticleScreen.route + "/{$key_article}",
+                route = Screen.ArticleScreen.route + "/{$key_article}/{isSaved}",
                 arguments = listOf(
                     navArgument(key_article) {
                         type = ArticleParamType()
+                    },
+                    navArgument("isSaved") {
+                        type = NavType.BoolType
                     }
                 )
             ) { entry ->
                 ArticleScreen(
                     article = entry.arguments?.getParcelable(key_article),
                     viewModel = viewModel,
+                    isSaved = entry.arguments?.getBoolean("isSaved")
                 )
             }
         }

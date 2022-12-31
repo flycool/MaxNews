@@ -40,8 +40,21 @@ class NewsRepository @Inject constructor(
 
     fun getSavedNews(): Flow<List<Article>> = db.getArticleDao().getAllArticles()
 
-    suspend fun upsert(article: Article) = db.getArticleDao().upsert(article)
+    suspend fun upsert(article: Article) {
+        try {
+            db.getArticleDao().upsert(article)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
-    suspend fun deleteArticle(article: Article) = db.getArticleDao().deleteArticle(article)
+    suspend fun deleteArticle(article: Article) {
+        try {
+            db.getArticleDao().deleteArticle(article)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
 }

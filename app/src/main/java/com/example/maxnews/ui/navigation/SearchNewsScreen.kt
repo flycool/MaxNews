@@ -51,7 +51,7 @@ fun SearchNewsScreen(
                     Column(
                         modifier = Modifier
                             .clickable {
-                                navController.navigate(Screen.ArticleScreen.route + "/${item.encodeToString()}")
+                                navController.navigate(Screen.ArticleScreen.route + "/${item.encodeToString()}/false")
                             }
                             .padding(10.dp)
                     ) {
