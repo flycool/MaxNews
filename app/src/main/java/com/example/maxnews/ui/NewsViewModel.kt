@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.util.Collections.addAll
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,15 +26,16 @@ class NewsViewModel @Inject constructor(
     val state = _breakingNewsState.asStateFlow()
     var pageNumber = 1
 
-    var searchPageNumber = 1
+    private var breakingNewsResponse: NewsResponse? = null
 
+    var searchPageNumber = 1
     var searchQuery by mutableStateOf("")
         private set
 
     fun updateSearQuery(input: String) {
         searchQuery = input
-        println("search query: $searchQuery")
     }
+
 
     init {
         getBreakingNews("us")
@@ -41,6 +43,7 @@ class NewsViewModel @Inject constructor(
 
     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
         updateState(
+            articles = breakingNewsResponse?.articles ?: mutableListOf(),
             state = _breakingNewsState,
             isLoading = true
         )
@@ -49,6 +52,7 @@ class NewsViewModel @Inject constructor(
             handleBreakingNewsResponse(response)
         } catch (e: Exception) {
             updateState(
+                articles = breakingNewsResponse?.articles ?: mutableListOf(),
                 state = _breakingNewsState,
                 isLoading = false,
                 errorMessage = e.message
@@ -92,24 +96,36 @@ class NewsViewModel @Inject constructor(
     private fun handleBreakingNewsResponse(response: Response<NewsResponse>) {
         if (response.isSuccessful) {
             response.body()?.let { result ->
+                pageNumber++
+
+                val articles = breakingNewsResponse?.articles ?: result.articles
+
+                if (breakingNewsResponse == null) {
+                    breakingNewsResponse = result
+                } else {
+                    articles += result.articles
+                }
+
                 updateState(
                     state = _breakingNewsState,
-                    articles = result.articles,
+                    articles = articles,
                     isLoading = false
                 )
                 return
             }
         }
         updateState(
+            articles = breakingNewsResponse?.articles ?: mutableListOf(),
             state = _breakingNewsState,
             errorMessage = response.message(),
             isLoading = false,
         )
     }
 
+
     private fun updateState(
         state: MutableStateFlow<NewState>,
-        articles: List<Article> = emptyList(),
+        articles: MutableList<Article> = mutableListOf(),
         errorMessage: String? = null,
         isLoading: Boolean = false
     ) {
@@ -125,9 +141,11 @@ class NewsViewModel @Inject constructor(
     fun saveArticle(article: Article) = viewModelScope.launch {
         newsRepository.upsert(article)
     }
+
     fun deleteArticle(article: Article) = viewModelScope.launch {
         newsRepository.deleteArticle(article)
     }
+
     val savedNews = newsRepository.getSavedNews().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),

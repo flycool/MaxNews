@@ -12,12 +12,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import com.example.maxnews.R
 import com.example.maxnews.data.model.encodeToString
 import com.example.maxnews.ui.NewsViewModel
 import kotlinx.coroutines.launch
@@ -40,7 +49,6 @@ fun SavedNewsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         ) {
             items(savedNews) { item ->
                 Column(
@@ -84,7 +92,7 @@ fun SavedNewsScreen(
                                 FractionalThreshold(if (direction == DismissDirection.EndToStart) 0.25f else 0.5f)
                             }
                         ) {
-                            Text(text = item.title)
+                            NewsItem(item)
                         }
                     }
                 }
